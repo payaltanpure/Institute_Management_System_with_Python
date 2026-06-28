@@ -8,3 +8,10 @@ create table students (
    address text,
    admission_date date
 );
+
+create table courses(
+       course_id int primary key auto_increment,
+       course_name varchar(100) unique not null,
+       duration varchar(50),
+       fees decimal(10,2)
+);
