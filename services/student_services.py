@@ -477,3 +477,393 @@ def update_student():
     finally:
         cursor.close()
         conn.close()
+
+
+
+
+def update_name():
+
+    try:
+        sid = int(input("Enter Student ID to update name: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudents Current Name")
+        print("-----------------------------------")
+        print("Name             :", row[1])
+
+        print("\nEnter New Details")
+
+        # ---------------- Name Validation ----------------
+        name = input("New Name: ").strip()
+
+        if name == "":
+            print("Student name cannot be empty.")
+            return
+
+        if not name.replace(" ", "").isalpha():
+            print("Student name should contain only alphabets.")
+            return
+        
+        cursor.execute("update students set student_name=%s where student_id=%s", (name, sid,))
+        conn.commit()
+
+        print("Student with student_id=%s updated!", (sid,))
+        
+    except Exception as e:
+            conn.rollback()
+            print("Database Error:", e)
+
+    finally:
+            cursor.close()
+            conn.close()
+
+    
+
+
+
+def update_mobile():
+
+    try:
+        sid = int(input("Enter Student ID to update mobile: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudents Current Mobile")
+        print("-----------------------------------")
+        print("Name             :", row[2])
+
+        print("\nEnter New Details")
+
+        # ---------------- Name Validation ----------------
+        mobile = input("New Mobile: ").strip()
+
+
+        if mobile == "":
+            print("Mobile number cannot be empty.")
+            return
+
+        if not mobile.isdigit():
+            print("Mobile number should contain digits only.")
+            return
+
+        if len(mobile) != 10:
+            print("Mobile number must contain exactly 10 digits.")
+            return
+
+        if mobile[0] not in "6789":
+            print("Mobile number must start with 6, 7, 8 or 9.")
+            return
+
+        cursor.execute("update students set mobile=%s where student_id=%s", (mobile, sid,))
+        conn.commit()
+
+        print("Student with student_id=%s updated!", (sid,))
+        
+    except Exception as e:
+            conn.rollback()
+            print("Database Error:", e)
+
+    finally:
+            cursor.close()
+            conn.close()
+
+    
+
+
+import re
+
+# ==========================================================
+# UPDATE EMAIL
+# ==========================================================
+def update_email():
+
+    try:
+        sid = int(input("Enter Student ID to update email: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudent's Current Email")
+        print("-----------------------------------")
+        print("Email :", row[3])
+
+        print("\nEnter New Details")
+
+        # ---------------- Email Validation ----------------
+        email = input("New Email: ").strip()
+
+        if email == "":
+            print("Email cannot be empty.")
+            return
+
+        email_pattern = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+
+        if not re.match(email_pattern, email):
+            print("Invalid email format.")
+            return
+
+        # ---------------- Same Email Check ----------------
+        if email == row[3]:
+            print("New email is the same as the current email.")
+            return
+
+        # ---------------- Duplicate Email Check ----------------
+        cursor.execute("""
+        SELECT student_id
+        FROM students
+        WHERE email=%s
+        AND student_id<>%s
+        """, (email, sid))
+
+        if cursor.fetchone():
+            print("Email already registered.")
+            return
+
+        # ---------------- Update Email ----------------
+        cursor.execute("""
+        UPDATE students
+        SET email=%s
+        WHERE student_id=%s
+        """, (email, sid))
+
+        conn.commit()
+
+        print(f"Student email updated successfully for Student ID {sid}.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==========================================================
+# UPDATE ADDRESS
+# ==========================================================
+def update_address():
+
+    try:
+        sid = int(input("Enter Student ID to update address: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudent's Current Address")
+        print("-----------------------------------")
+        print("Address :", row[4])
+
+        print("\nEnter New Details")
+
+        # ---------------- Address Validation ----------------
+        address = input("New Address: ").strip()
+
+        if address == "":
+            print("Address cannot be empty.")
+            return
+
+        # Optional: Prevent updating with the same address
+        if address == row[4]:
+            print("New address is the same as the current address.")
+            return
+
+        # ---------------- Update Address ----------------
+        cursor.execute("""
+        UPDATE students
+        SET address=%s
+        WHERE student_id=%s
+        """, (address, sid))
+
+        conn.commit()
+
+        print(f"Student address updated successfully for Student ID {sid}.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+from datetime import datetime
+
+# ==========================================================
+# UPDATE ADMISSION DATE
+# ==========================================================
+def update_admission_date():
+
+    try:
+        sid = int(input("Enter Student ID to update admission date: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudent's Current Admission Date")
+        print("-----------------------------------")
+        print("Admission Date :", row[5])
+
+        print("\nEnter New Details")
+
+        # ---------------- Admission Date Validation ----------------
+        admission_date = input("New Admission Date (YYYY-MM-DD): ").strip()
+
+        if admission_date == "":
+            print("Admission date cannot be empty.")
+            return
+
+        try:
+            datetime.strptime(admission_date, "%Y-%m-%d")
+
+        except ValueError:
+            print("Invalid date format. Use YYYY-MM-DD.")
+            return
+
+        # ---------------- Same Date Check ----------------
+        if str(row[5]) == admission_date:
+            print("New admission date is the same as the current admission date.")
+            return
+
+        # ---------------- Update Admission Date ----------------
+        cursor.execute("""
+        UPDATE students
+        SET admission_date=%s
+        WHERE student_id=%s
+        """, (admission_date, sid))
+
+        conn.commit()
+
+        print(f"Admission date updated successfully for Student ID {sid}.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
