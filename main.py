@@ -42,7 +42,8 @@ while True:
             print("3. Delete Student")
             print("4. View Students")
             print("5. Update Student")
-            print("6. Back to Main Menu")
+            print("6. Change Batch")
+            print("7. Back to Main Menu")
 
             # -------- STUDENT MENU VALIDATION --------
             try:
@@ -73,8 +74,10 @@ while True:
                     print("3.Update Student Email:")
                     print("4.Update Student Address:")
                     print("5.Update Student Admission Date:")
-                    print("6.Update all details:")
-                    print("7.Back to sms menu")
+                    print("6.Update Course ID:")
+                    print("7.Update Batch ID:")
+                    print("8.Update all details:")
+                    print("9.Back to sms menu")
 
                     ch= int(input("Enter the choice:"))
                     if ch==1:
@@ -88,13 +91,20 @@ while True:
                     elif ch==5:
                         update_admission_date()
                     elif ch==6:
+                        update_course_id()
+                    elif ch==7:
+                        update_batch_id()
+                    elif ch==8:
                         update_student()
                     else:
                         print("Exit from update, back to sms menu")
                         break;
+            
+            elif student_choice == 6:
+                  change_batch()
                 
 
-            elif student_choice == 6:
+            elif student_choice == 7:
                 print("Returning to Main Menu...")
                 break
 
@@ -201,7 +211,10 @@ while True:
             print("3. Delete Batch")
             print("4. View Batch")
             print("5. Update Batch")
-            print("6. Back to Main Menu")
+            print("6. Assign Faculty")
+            print("7. Remove Faculty")
+            print("8. View Batch Students")
+            print("9. Back to Main Menu")
 
             # -------- COURSE MENU VALIDATION --------
             try:
@@ -268,6 +281,15 @@ while True:
                         print("Invalid Choice.")
 
             elif course_choice == 6:
+                assign_faculty()
+
+            elif course_choice == 7:
+                remove_faculty()
+            
+            elif course_choice == 8:
+                view_batch_students() 
+
+            elif course_choice == 9:
                 print("Returning to Main Menu...")
                 break
 
@@ -291,8 +313,9 @@ while True:
             print("3. Delete Faculty")
             print("4. View Faculty")
             print("5. Update Faculty")
-            print("6.Assign Batch")
-            print("7. Back to Main Menu")
+            print("6. Assign Batch")
+            print("7. View Faculty Batches")
+            print("8. Back to Main Menu")
 
             # -------- FACULTY MENU VALIDATION --------
             try:
@@ -365,7 +388,10 @@ while True:
             elif faculty_choice==6:
                 assign_batch()
 
-            elif faculty_choice == 7:
+            elif faculty_choice==7:
+                view_faculty_batches()
+
+            elif faculty_choice == 8:
                 print("Returning to Main Menu...")
                 break
 

@@ -68,6 +68,11 @@ def add_students():
     except ValueError:
         print("Invalid date format. Use YYYY-MM-DD")
         return
+    
+
+    #batch id input
+    batch_id = int(input("Enter batch id:"))
+    course_id= int(input("Enter course id:"))
 
     # Create Student Object
     s = student(
@@ -75,7 +80,9 @@ def add_students():
         tmobile,
         email,
         address,
-        admission_date
+        admission_date, 
+        batch_id,
+        course_id
     )
 
     conn = get_connection()
@@ -106,8 +113,8 @@ def add_students():
         # ---------------- Insert Student ----------------
         query = """
         INSERT INTO students
-        (student_name, mobile, email, address, admission_date)
-        VALUES (%s, %s, %s, %s, %s)
+        (student_name, mobile, email, address, admission_date,course_id, batch_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
 
         values = (
@@ -115,7 +122,9 @@ def add_students():
             s.mobile,
             s.email,
             s.address,
-            s.admission_date
+            s.admission_date,
+            s.course_id,
+            s.batch_id
         )
 
         cursor.execute(query, values)
@@ -148,7 +157,9 @@ def view_students():
                mobile,
                email,
                address,
-               admission_date
+               admission_date, 
+               course_id,
+               batch_id
         FROM students
         ORDER BY student_id
         """)
@@ -172,6 +183,8 @@ Mobile Number   : {row[2]}
 Email           : {row[3]}
 Address         : {row[4]}
 Admission Date  : {row[5]}
+Course ID       : {row[6]}
+Batch ID        : {row[7]}
 {"-" * 80}
 """)
 
@@ -210,7 +223,9 @@ def search_student():
                mobile,
                email,
                address,
-               admission_date
+               admission_date, 
+               course_id,
+               batch_id
         FROM students
         WHERE student_id=%s
         """, (sid,))
@@ -229,6 +244,8 @@ def search_student():
             print(f"Email           : {row[3]}")
             print(f"Address         : {row[4]}")
             print(f"Admission Date  : {row[5]}")
+            print(f"Course ID       : {row[6]}")
+            print(f"Batch ID        : {row[7]}")
 
             print("=" * 50)
 
@@ -351,6 +368,8 @@ def update_student():
         print("Email          :", row[3])
         print("Address        :", row[4])
         print("Admission Date :", row[5])
+        print(f"Course ID     : {row[6]}")
+        print(f"Batch ID      : {row[7]}")
 
         print("\nEnter New Details")
 
@@ -413,6 +432,9 @@ def update_student():
             print("Invalid date format. Use YYYY-MM-DD")
             return
         
+        course_id= int(input("Enter course id:"))
+        batch_id= int(input("Enter batch id:"))
+        
                 # ---------------- Duplicate Mobile Check ----------------
         cursor.execute(
             """
@@ -451,7 +473,9 @@ def update_student():
             mobile=%s,
             email=%s,
             address=%s,
-            admission_date=%s
+            admission_date=%s,
+            course_id=%s,
+            batch_id=%s
         WHERE student_id=%s
         """
 
@@ -461,6 +485,8 @@ def update_student():
             email,
             address,
             admission_date,
+            course_id,
+            batch_id,
             sid
         )
 
@@ -863,6 +889,159 @@ def update_admission_date():
     finally:
         cursor.close()
         conn.close()
+
+
+
+def update_course_id():
+    
+    try:
+        sid = int(input("Enter Student ID to update course id: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudent's Current Course ID")
+        print("-----------------------------------")
+        print("Course ID :", row[6])
+
+        print("\nEnter New Details")
+
+        # ---------------- Admission Date Validation ----------------
+        course_id= int(input("Enter new course id:"))
+
+
+        # ---------------- Update ----------------
+        cursor.execute("""
+        UPDATE students
+        SET course_id=%s
+        WHERE student_id=%s
+        """, (course_id, sid))
+
+        conn.commit()
+
+        print(f"Course ID updated successfully for Student ID {sid}.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
+def update_batch_id():
+    
+    try:
+        sid = int(input("Enter Student ID to update batch id: "))
+
+        if sid <= 0:
+            print("Student ID must be greater than 0.")
+            return
+
+    except ValueError:
+        print("Student ID must be numeric.")
+        return
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # ---------------- Check Student Exists ----------------
+        cursor.execute("""
+        SELECT *
+        FROM students
+        WHERE student_id=%s
+        """, (sid,))
+
+        row = cursor.fetchone()
+
+        if row is None:
+            print("Student not found.")
+            return
+
+        print("\nStudent's Current Batch ID")
+        print("-----------------------------------")
+        print("Batch ID :", row[7])
+
+        print("\nEnter New Details")
+
+        # ---------------- Admission Date Validation ----------------
+        batch_id= int(input("Enter new batch id:"))
+
+
+        # ---------------- Update ----------------
+        cursor.execute("""
+        UPDATE students
+        SET batch_id=%s
+        WHERE student_id=%s
+        """, (batch_id, sid))
+
+        conn.commit()
+
+        print(f"Batch ID updated successfully for Student ID {sid}.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def change_batch():
+    student_id = int(input("Enter student id whose batch is to be changed:"))
+    
+    conn= get_connection()
+    cursor= conn.cursor()
+
+    cursor.execute("select * from students where student_id=%s", (student_id,))
+    row= cursor.fetchone()
+    
+    if row is None:
+        print("Student do not have prior any batch")
+    else:
+        print("Old Batch of student is:")
+        print(row[7])
+
+        new_batch_id= int(input("Enter new batch id to assign:"))
+        cursor.execute("update students set batch_id=%s where student_id=%s", (new_batch_id, student_id,))
+        conn.commit()
+        print("Batch changes successfully!")
+
+
+
+
+
+
+
 
 
 

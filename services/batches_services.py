@@ -542,3 +542,62 @@ def update_batch_course():
     finally:
         cursor.close()
         conn.close()
+
+
+def assign_faculty():
+    
+    batch_id= int(input("Enter batch ID to which we want to assign the faculty:"))
+    faculty_id= int(input("Enter faculty ID to whom u want to assign the batch:"))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("select * from batches where batch_id=%s", (batch_id,))
+    row1= cursor.fetchone()
+
+    cursor.execute("select * from faculty where faculty_id=%s", (faculty_id,))
+    row2= cursor.fetchone()
+    
+    if(row1 is None or row2 is None):
+        print("Batch of Faculty not found")
+    else:
+        cursor.execute("update batches set faculty_id=%s where batch_id=%s", (faculty_id, batch_id))
+        conn.commit()
+        print("Batch assigned to faculty!")
+
+
+def remove_faculty():
+    
+    batch_id= int(input("Enter batch ID whose faculty should be removed:"))
+    
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("select * from batches where batch_id=%s", (batch_id,))
+    row1= cursor.fetchone()
+
+    
+    
+    if(row1 is None ):
+        print("Batch not found")
+    else:
+        cursor.execute(
+            "UPDATE batches SET faculty_id = NULL WHERE batch_id = %s",
+            (batch_id,)
+        )
+        conn.commit()
+        print("Faculty removed !")
+
+
+def view_batch_students() :
+    batch_id = int(input("Enter the batch id whose students are to be displayed: "))
+
+    conn= get_connection()
+    cursor= conn.cursor()
+
+    cursor.execute("select * from students where batch_id=%s", (batch_id,))
+    rows= cursor.fetchall()
+
+    for row in rows:
+        print(row)

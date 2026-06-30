@@ -859,4 +859,23 @@ def assign_batch():
 
 
     
+def view_faculty_batches():
+    faculty_id = int(input("Enter faculty id whose batches u want to check:"))
+
+    conn= get_connection()
+    cursor= conn.cursor()
+    cursor.execute("select * from batches where faculty_id=%s", (faculty_id,))
+    rows= cursor.fetchall()
+    cursor.execute("select * from faculty where faculty_id=%s", (faculty_id,))
+    row1= cursor.fetchall()
+    for row1 in row1:
+        print(f"Faculty name: {row1[1]}") 
+    for row in rows:
+        print(f"Batch id: {row[0]}")
+        print(f"Batch Name: {row[1]}")
+        print(f"Timing: {row[2]}")
+        print(f"Course ID: {row[4]}")
+
+    
+
 
